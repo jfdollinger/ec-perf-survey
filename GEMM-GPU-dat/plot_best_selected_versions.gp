@@ -13,12 +13,6 @@ set key top left
 set xrange [0:3500]
 #set yrange [100000:1.2e6]
 
-# Set the line style and color for each curve
-set style line 1 lt 1 lw 2 lc rgb "red"
-set style line 2 lt 1 lw 2 lc rgb "blue"
-set style line 3 lt 1 lw 2 lc rgb "yellow"
-set style line 4 lt 1 lw 2 lc rgb "brown"
-set style line 5 lt 1 lw 2 lc rgb "orange"
 
 # Plot the data for each curve
 plot "data_v10" using 1:($2/1000) with linespoints title "tile-size = 8x8x8, block-size = 8x8, v10",\
@@ -36,15 +30,6 @@ plot "data_v10" using 1:($2/1000) with linespoints title "tile-size = 8x8x8, blo
      "courbe_minimal_GEMM-GPU.dat" using 1:($2/1000) with linespoints title "Best Selected Versions"
      
      
-#REJECTED     
-#     "data08" using 1:($2/1000) with linespoints title "tile-size = 128x64x16, block-size = 16x16",\
-#     "data02" using 1:($2/1000) with linespoints title "gemm, tile-size = 128x16x16, block-size = 16x16",\
-#     "data04" using 1:($2/1000) with linespoints title "gemm, tile-size = 64x64x32, block-size = 32x32",\
-#     "data03" using 1:($2/1000) with linespoints title "gemm, tile-size = 256x32x32, block-size = 32x32",\
-#     "data05" using 1:($2/1000) with linespoints title "gemm, tile-size = 128x32x32, block-size = 32x32",\
-#     "data11" using 1:($2/1000) with linespoints title "gemm, tile-size = 128x64x32, block-size = 32x32",\
-#      "data06" using 1:($2/1000) with linespoints title "gemm, tile-size = 32x16x16, block-size = 16x16",\
-#     "data15" using 1:($2/1000) with linespoints title "gemm, tile-size = 32x32x64, block-size = 32x32",\
 
 #"linear-algebra/blas/gemm_128_128_128-32_32/" 
 #"linear-algebra/blas/gemm_128_16_16-16_16/" 

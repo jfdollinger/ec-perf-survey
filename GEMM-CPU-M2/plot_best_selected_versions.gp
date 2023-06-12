@@ -13,12 +13,6 @@ set key top left
 #set xrange [0:100]
 #set yrange [0:10]
 
-# Set the line style and color for each curve
-set style line 1 lt 1 lw 2 lc rgb "red"
-set style line 2 lt 1 lw 2 lc rgb "blue"
-set style line 3 lt 1 lw 2 lc rgb "yellow"
-set style line 4 lt 1 lw 2 lc rgb "brown"
-set style line 5 lt 1 lw 2 lc rgb "orange"
 
 # Plot the data for each curve
 plot "data_v1.dat" using 1:2 with linespoints title "gemm, tile-size = 8x8x8",\
