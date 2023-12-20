@@ -15,11 +15,11 @@ set key top left
 
 
 # Plot the data for each curve
-plot "data_v1.dat" using 1:($2/1000)  with linespoints title "tile-size = 8x8x8, v1",\
-     "data_v2.dat" using 1:($2/1000)  with linespoints title "tile-size = 16x16x16, v2",\
-     "data_v3.dat" using 1:($2/1000)  with linespoints title "tile-size = 32x32x32, v3",\
-     "data_v4.dat" using 1:($2/1000)  with linespoints title "tile-size = 64x64x64, v4",\
-     "data_v5.dat" using 1:($2/1000)  with linespoints title "tile-size = 128x128x128, v5"
+plot "data_v1.dat" using 1:($2 / ($1 * ($1 + 2 * $1 * ($1 - 1) + ($1 - 1) * ($1 - 1))))  with linespoints title "tile-size = 8x8x8, v1",\
+     "data_v2.dat" using 1:($2 / ($1 * ($1 + 2 * $1 * ($1 - 1) + ($1 - 1) * ($1 - 1))))  with linespoints title "tile-size = 16x16x16, v2",\
+     "data_v3.dat" using 1:($2 / ($1 * ($1 + 2 * $1 * ($1 - 1) + ($1 - 1) * ($1 - 1))))  with linespoints title "tile-size = 32x32x32, v3",\
+     "data_v4.dat" using 1:($2 / ($1 * ($1 + 2 * $1 * ($1 - 1) + ($1 - 1) * ($1 - 1))))  with linespoints title "tile-size = 64x64x64, v4",\
+     "data_v5.dat" using 1:($2 / ($1 * ($1 + 2 * $1 * ($1 - 1) + ($1 - 1) * ($1 - 1))))  with linespoints title "tile-size = 128x128x128, v5"
      
 
      
