@@ -3,7 +3,7 @@ set output 'output_best_selected_versions.eps'
 
 #set title "Execution time of parallel and tiled versions of GEMM on NVIDIA A40-2Q"
 set xlabel "Problem size (NI = NJ = NK)"
-set ylabel "Execution time (ms)"
+set ylabel "Execution time per iteration (ns)"
 
 set key top right
 set logscale y
@@ -11,11 +11,11 @@ set logscale y
 
 # Set the range of the x-axis and y-axis
 #set xrange [0:3500]
-#set yrange [0:0.1]
+set yrange [0.01:]
 
 
 # Plot the data for each curve
-plot "data_v10" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 8x8x8, block-size = 8x8, v10",\
+plot "data_v10" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints lc "dark-khaki" title "tile-size = 8x8x8, block-size = 8x8, v10",\
      "data_v11" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 16x16x16, block-size = 8x8, v11",\
      "data_v12" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 32x32x32, block-size = 8x8, v12",\
      "data_v13" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 64x64x64, block-size = 8x8, v13",\
@@ -27,7 +27,7 @@ plot "data_v10" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "
      "data_v19" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 32x32x32, block-size = 32x32, v19",\
      "data_v20" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 64x64x64, block-size = 32x32, V20",\
      "data_v21" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with linespoints title "tile-size = 128x128x128, block-size = 32x32, v21",\
-     "courbe_minimal_GEMM-GPU.dat" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with lines lw 4 lc "salmon" title "minimal execution time"
+     #"courbe_minimal_GEMM-GPU.dat" using 1:($2 / ($1 * $1 + $1 * $1 * $1)) with lines lw 4 lc "black" title "minimal execution time"
      
      
 
