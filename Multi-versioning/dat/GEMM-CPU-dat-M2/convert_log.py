@@ -7,7 +7,7 @@ def compute_log10(input_file, output_file):
     
     data['Column2'] = 1000 * data['Column2'] / (data['Column1'] * data['Column1'] + data['Column1'] * data['Column1'] * data['Column1'])
     # Compute log10 of values in the second column
-    data['Column2_Log10'] = np.log2(data['Column2'])
+    data['Column2_Log10'] = np.log10(data['Column2'])
     
     # Save the computed log10 values to a new file
     data.to_csv(output_file, columns=['Column1', 'Column2_Log10'], sep='\t', index=False, header=False)  # Adjust separator if needed

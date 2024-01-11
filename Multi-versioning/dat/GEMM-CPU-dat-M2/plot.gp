@@ -3,7 +3,7 @@ set output 'dolli8.eps'
 
 #set title "Execution time of parallel and tiled gemm on Intel(R) Xeon(R) CPU E3-1260L v5"
 set xlabel "Problem size (NI = NJ = NK)"
-set ylabel "Execution time per iteration (log(ps))"
+set ylabel "Execution time per iteration (log10(ps))"
 
 set key top right
 #set logscale y
@@ -11,7 +11,7 @@ set key top right
 
 # Set the range of the x-axis and y-axis
 #set xrange [0:100]
-set yrange [0:15]
+set yrange [0.5:5.5]
 
 
 # Plot the data for each curve
