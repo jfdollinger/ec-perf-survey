@@ -16,31 +16,81 @@ def read_csv_files(files):
   return data_frames
 
 
-def intersection_point(point1_line1, point2_line1, point1_line2, point2_line2):
-  # Function to calculate slope and y-intercept given two points
-  def line_equation(point1, point2):
-    slope = (point2[1] - point1[1]) / (point2[0] - point1[0])
-    y_intercept = point1[1] - slope * point1[0]
-    return slope, y_intercept
+def negate(v1):
+  a, b = v1
 
-  # Get the equations of the lines
-  m1, b1 = line_equation(point1_line1, point2_line1)
-  m2, b2 = line_equation(point1_line2, point2_line2)
+  return (-a, -b)
 
-  # Check if the slopes are equal (parallel lines)
-  if m1 == m2:
-    if b1 == b2:
-      return "Infinite intersections (same line)"
-    else:
-      return "No intersection (parallel lines)"
 
-  # Calculate x-coordinate of intersection
-  x_intersection = (b2 - b1) / (m1 - m2)
+def to_vector_2d(p1, p2):
+  x1, y1 = p1
+  x2, y2 = p2
 
-  # Calculate y-coordinate of intersection using one of the lines
-  y_intersection = m1 * x_intersection + b1
+  return (x2 - x1, y2 - y1)
 
-  return x_intersection, y_intersection
+
+def cross_product_2d(v1, v2):
+  a, b = v1
+  c, d = v2
+
+  return a * d - b * c
+
+
+def segment_intersection(s1, s2):
+  #a segment is a combination of two tuples of coordinates
+  (x1, y1), (x2, y2) = s1
+  (x3, y3), (x4, y4) = s2
+
+  v1 = to_vector_2d((x1, y1), (x2, y2))
+  v2 = to_vector_2d((x3, y3), (x4, y4))
+  v3 = to_vector_2d((x3, y3), (x1, y1))
+
+  det = cross_product_2d(v1, v2)
+
+  if det != 0.0:
+    # segments are not parallel
+    u = cross_product_2d(v2, v3) / det
+    v = cross_product_2d(negate(v3), v1) / det
+
+    if (0.0 <= u <= 1.0) and (0.0 <= v <= 1.0):
+      x5, y5 = v1
+
+      return (x1 + u * x5, y1 + u * y5)
+
+  return None
+
+
+def do_interval_intersect(linterval, rinterval):
+  x1, x2 = linterval
+  x3, x4 = rinterval
+
+  x1, x2 = (min(x1, x2), max(x1, x2))
+  x3, x4 = (min(x3, x4), max(x3, x4))
+
+  return x1 <= x3 and x2 >= x3 or x3 <= x1 and x4 >= x1
+
+
+#do not forget to add polylines id
+def intersect_polyline(lpolyline, rpolyline):
+  index = 0
+  intersections = []
+
+  for (x1, y1), (x2, y2) in lpolyline:
+    offset = 0
+    for ((x3, y3), (x4, y4)) in rpolyline[index:]:
+      point = segment_intersection(((x1, y1), (x2, y2)), ((x3, y3), (x4, y4)))
+      if point is not None:
+        intersections.append(point)
+
+      if x4 > x2:  #i.e. not x4 <= x2
+        break
+
+      offset = offset + 1
+
+    index = index + offset
+    if index == len(rpolyline):
+      break
+  return intersections
 
 
 if len(sys.argv) < 1:
@@ -50,72 +100,54 @@ if len(sys.argv) < 1:
 files = sys.argv[1:]
 data_frames = read_csv_files(files)
 
-vals = {}
-for idx, data_frame in enumerate(data_frames):
-  prev_tuple = None
+polylines = []
+for data_frame in data_frames:
+  df_values = data_frame.values
+
+  (x1, y1) = df_values[0]
+
+  segments = []
+  for x2, y2 in df_values[1:]:
+    segments.append(((x1, y1), (x2, y2)))
+
+    x1, y1 = x2, y2
+
+  polylines.append(segments)
+
+intersections = []
+for index, polyline in enumerate(polylines[:len(polylines) - 1]):
+  for other_index, other_polyline in enumerate(polylines[index + 1:]):
+    #tagging the intersections
+    knots = intersect_polyline(polyline, other_polyline)
+    knots = [(knot, index, other_index + index + 1) for knot in knots]
+
+    intersections.extend(knots)
+
+for index, data_frame in enumerate(data_frames):
   for pb_size, exec_time in data_frame.values:
-    curr_tuple = (pb_size, exec_time)
-    data_tuple = {'id': idx, 'curr': curr_tuple, 'prev': prev_tuple}
-    if pb_size in vals:
-      vals[pb_size].append(data_tuple)
-    else:
-      vals[pb_size] = [data_tuple]
+    intersections.append(((pb_size, exec_time), index, index))
 
-    prev_tuple = curr_tuple
+#double sorting to get the order of the intersections
+intersections = sorted(intersections, key=lambda x: x[0][1])
+intersections = sorted(intersections, key=lambda x: x[0][0])
 
+#following the first knot leads to the minimal curve
 auxiliary = {}
-prev_min_tuple = None
+(_, _), _, id2 = intersections[0]
+for knot in intersections:
+  (pb_size, exec_time), id3, id4 = knot
 
-dict_tuples = list(vals.items())
-for idx, (_, data_list) in enumerate(dict_tuples):
-  min_tuple = min(data_list,
-                       key=lambda data_element: data_element['curr'][1])
-  min_tuple_id = min_tuple['id']
-
-  m4, b4 = min_tuple['curr']
+  if id2 in (id3, id4):
+    print(f"{pb_size}\t{exec_time}")
+    #aux
+    version_exec_time = [float('inf')] * (len(data_frames))
+    version_exec_time[id2] = exec_time
   
-  if prev_min_tuple is not None:
-    prev_tuple_id = prev_min_tuple['id']
-    if min_tuple_id != prev_tuple_id:
-      prev_next_tuple_id = prev_min_tuple['id']
-      
-      prev_next_tuple = None
-      for _, next_data_list in dict_tuples[idx:]:
-        prev_next_tuple = next((prev_next_tuple for prev_next_tuple in next_data_list
-                                if prev_next_tuple['id'] == prev_next_tuple_id), None)
-        if prev_next_tuple is not None:
-          break
-      
-      if prev_next_tuple is not None:
-        prev_tuple = min_tuple['prev']
-        
-        m1, b1 = prev_min_tuple['curr']
-        m2, b2 = prev_next_tuple['curr']
-        m3, b3 = prev_tuple
-
-        x, y = intersection_point((m1, b1), (m2, b2), (m3, b3), (m4, b4))
-        print(f"{x}\t{y}")
-        
-        version_exec_time = [float('inf')] * len(data_frames)
-        version_exec_time[prev_tuple_id] = y
-        version_exec_time[min_tuple_id] = y
-
-        auxiliary[x] = version_exec_time
-      else:
-        print("Houston, got a problem here !")
-        sys.exit(1)
-
-  prev_min_tuple = min_tuple
-
-  print(f"{m4}\t{b4}")
-  
-  version_exec_time = [float('inf')] * len(data_frames)
-  version_exec_time[min_tuple_id] = b4
-  
-  auxiliary[m4] = version_exec_time
-  
-
-
+    id2 = id4 if id2 == id3 else id3
+    
+    version_exec_time[id2] = exec_time
+    auxiliary[pb_size] = version_exec_time
+    
 auxiliary_df = pd.DataFrame.from_dict(auxiliary, orient='index')
 auxiliary_df.to_csv('aux_output', header=False, sep='\t')
-  
+
