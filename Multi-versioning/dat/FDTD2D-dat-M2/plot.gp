@@ -11,7 +11,7 @@ set key top right
 
 # Set the range of the x-axis and y-axis
 #set xrange [0:100]
-#set yrange [0:10]
+set yrange [0.5:5]
 
 
 # Plot the data for each curve
