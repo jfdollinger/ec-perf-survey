@@ -5,7 +5,7 @@ set output 'rtt.eps'
 set xlabel "Latency (RTT in ms)"
 set ylabel "Cumulative probability"
 
-set key top right
+set key bottom right
 #set logscale y
 set logscale x
 
@@ -13,10 +13,14 @@ set logscale x
 #set xrange [0:1.5]
 
 # Plot the data for each curve
-plot "rtt_b2_wifi.cumul.dat" using 1:2 with linespoint pt 4 linewidth 3 title "Wifi (indoor)",\
-     "rtt_b2_4g+.cumul.dat" using 1:2 with linespoint pt 2 linewidth 3 title "4G+ (indoor)",\
-     "rtt_b2_wifi.cumul.norm.dat" using 1:2 with linespoint pt 4 linewidth 3 title "Wifi (indoor, normalized)",\
-     "rtt_b2_4g+.cumul.norm.dat" using 1:2 with linespoint pt 2 linewidth 3 title "4G+ (indoor, normalized)"
+plot "b2_wifi.cumul.dat" using 1:2 with linespoint pt 4 linewidth 3 title "Wifi (indoor)",\
+     "b2_wifi.cumul.norm.dat" using 1:2 with linespoint pt 4 linewidth 3 title "Wifi (indoor, normalized)",\
+     "b2_4g+.cumul.dat" using 1:2 with linespoint pt 2 linewidth 3 title "4G+ (indoor)",\
+     "b2_4g+.cumul.norm.dat" using 1:2 with linespoint pt 2 linewidth 3 title "4G+ (indoor, normalized)",\
+     "4g_out.format.cumul.dat" using 1:2 with linespoint pt 3 linewidth 3 title "4G+ (outdoor)",\
+     "ether.cumul.dat" using 1:2 with linespoint pt 3 linewidth 3 title "Ethernet"
+     
+     
 
 #     "network.ping.kvm.int.cumul.dat" using 1:2 with linespoint pt 3 linewidth 3 linecolor rgb "light-green" title "KVM priv.",\
 #     "network.ping.tcg.ext.cumul.dat" using 1:2 with linespoint pt 13 linewidth 3 linecolor rgb "blue" title "TCG pub.-priv.",\
